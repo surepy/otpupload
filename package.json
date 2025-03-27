@@ -27,6 +27,7 @@
 	"dependencies": {
 		"@types/node": "^22.13.13",
 		"flowbite": "^3.1.2",
-		"flowbite-svelte": "^0.48.4"
+		"flowbite-svelte": "^0.48.4",
+		"otpauth": "^9.3.6"
 	}
 }

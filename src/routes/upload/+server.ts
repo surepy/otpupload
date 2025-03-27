@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import * as OTPAuth from "otpauth";
-import { OTP_SECRET, TOTP_WINDOW } from "$env/static/private"
+import { env } from "$env/dynamic/private"
 import { writeFile } from 'fs/promises';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -19,7 +19,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		period: 30,
 		// Arbitrary key encoded in base32 or `OTPAuth.Secret` instance
 		// (if omitted, a cryptographically secure random secret is generated).
-		secret: OTP_SECRET,
+		secret: env.OTP_SECRET,
 		//   or: `OTPAuth.Secret.fromBase32("US3WHSG7X5KAPV27VANWKQHF3SH3HULL")`
 		//   or: `new OTPAuth.Secret()`
 	});
@@ -31,7 +31,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		error(400, "no OTP token given");
 	}
 
-	let authenticated = totp.validate({ token: otp_token, window: parseInt(TOTP_WINDOW) ?? 10});
+	let authenticated = totp.validate({ token: otp_token, window: parseInt(env.TOTP_WINDOW) ?? 10});
 
 	if (authenticated != null) {
 		const fromData = await request.formData();
@@ -43,8 +43,12 @@ export const POST: RequestHandler = async ({ request }) => {
 		let written_files = [];
 
 		for (let file of <File[]>fromData.getAll("files")) {
-			//@ts-expect-error idc it works
-			await writeFile(`./static/uploads/${file.name}`, file.stream());
+			
+			await writeFile(
+				env.NODE_ENV === "production" ? `${env.UPLOAD_DIRECTORY}/${new Date().getTime()}_${file.name}` : `./static/uploads/${file.name}`, 
+				//@ts-expect-error idc it works
+				file.stream()
+			);
 			written_files.push(file.name);
 		}
 

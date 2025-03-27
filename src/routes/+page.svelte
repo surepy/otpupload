@@ -41,7 +41,7 @@
     <i>(because logging in for a single file sucks)</i>
 </p>
 
-<div class="w-full max-w-lg mb-5">
+<div class="w-full max-w-lg">
     {#if request}
         {#await request}
             <!-- TODO: move to axios so i can track progress -->
@@ -81,9 +81,9 @@
 
     <Label class="pb-1 text-left">Upload Files</Label>
 
-    <Fileupload bind:files class="mb-5" id="file" multiple clearable />
+    <Fileupload bind:files id="file" multiple clearable />
 
     <!-- TODO: dropzone -->
-</div>
 
-<Button class="mb-3 min-w-30 max-w-1/2 w-1/2" on:click={upload}>Upload</Button>
+    <Button class="mb-3 min-w-30 max-w-1/2 w-full mt-6" on:click={upload}>Upload</Button>
+</div>

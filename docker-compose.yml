@@ -1,0 +1,17 @@
+services:
+  otpupload:
+    image: otpupload
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      # ORIGIN: "http://plushie:3000"
+      TOTP_WINDOW: 10
+      # OTP_SECRET: 
+      BODY_SIZE_LIMIT: Infinity
+      UPLOAD_DIRECTORY: ./uploads
+    ports:
+      - 3000:3000
+    volumes:
+      - ./static/uploads:/app/uploads

@@ -28,7 +28,7 @@
 
 
 <p class="dark:text-gray-200 text-lg font-medium">
-    paste into .env
+    paste into .env (or set into docker)
 </p>
 <Blockquote border bg class="p-4 ">
     <p>OTP_SECRET="{new_otp_secret.base32}"</p>

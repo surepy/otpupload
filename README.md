@@ -3,6 +3,11 @@
 
 ## Deploying
 
+set ``OTP_SECRET=""`` and ``TOTP_WINDOW=10`` in ``docker-compose.yml`` or ``.env``
+
+and deploy it how u like (I will use docker in truenas fyi)
+
+keep ``UPLOAD_DIRECTORY="./uploads"`` as-is probably if using docker and just change the mounts
 
 ## Developing
 
