@@ -1,9 +1,15 @@
 # OTP-Upload
 (because logging in for a single file sucks)
 
+## Why
+
+I wanted to upload files to my truenas box without having to log into something when in a public pc for example
+
 ## Deploying
 
-set ``OTP_SECRET=""`` and ``TOTP_WINDOW=10`` in ``docker-compose.yml`` or ``.env``
+set ``OTP_SECRET=""`` and ``TOTP_WINDOW=10`` in ``docker-compose.yml`` or ``.env`` 
+
+(get those values by running the app without them and going to ``/setup`` in the application, TODO this will be improved)
 
 and deploy it how u like (I will use docker in truenas fyi)
 
