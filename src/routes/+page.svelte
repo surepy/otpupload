@@ -5,14 +5,23 @@
     import FileDropzone from "$lib/FileDropzone.svelte";
     import type { PageProps } from "./$types";
     import { client } from "@passwordless-id/webauthn";
+    import type { UploadTokenResponse } from "$lib/uploadtoken";
 
     let files: File[] = $state([]);
     let password: string = $state("");
     let request: Promise<Response> | null = $state(null);
+    let request_auth: Promise<Response> | null = $state(null);
 
-    let uploadProgress : number = $state(0);
+    let uploadProgress: number = $state(0);
 
-    async function upload(target: string, formData: FormData) {
+    async function upload(auth: string) {
+        //
+        request_auth = null;
+
+        let formData = new FormData();
+
+        formData.append("auth", auth);
+
         for (let file of files) {
             formData.append("files", file, file.name);
         }
@@ -27,20 +36,19 @@
             };
 
             xhr.onload = () => {
-                resolve(new Response(xhr.response, {
-                    status: xhr.status,
-                    statusText: xhr.statusText,
-                }));
-                
+                resolve(
+                    new Response(xhr.response, {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                    }),
+                );
                 files = [];
             };
 
             xhr.onerror = () => reject(new Error("Upload failed"));
-
-            xhr.open("POST", target);
+            xhr.open("POST", "/upload");
             xhr.send(formData);
         });
-
     }
 
     async function upload_otp() {
@@ -49,10 +57,18 @@
             return;
         }
 
-        let data = new FormData();
-        data.append("auth_otp", password);
-        
-        await upload("/upload", data);
+        request_auth = fetch("/upload_otp", {
+            method: "post",
+            body: JSON.stringify({
+                auth_otp: password,
+            }),
+        });
+
+        let auth_response: UploadTokenResponse = await (
+            await request_auth
+        ).json();
+
+        await upload(auth_response.token);
     }
 
     // https://webauthn.passwordless.id/authentication/
@@ -71,9 +87,16 @@
             challenge: challenge_request.challenge,
         });
 
-        let data = new FormData();
-        data.append("auth_passkey", JSON.stringify(auth));
-        await upload("/upload_passkeys", data);
+        request_auth = fetch("/upload_passkeys", {
+            method: "post",
+            body: JSON.stringify(auth),
+        });
+
+        let auth_response: UploadTokenResponse = await (
+            await request_auth
+        ).json();
+
+        await upload(auth_response.token);
     }
 </script>
 
@@ -84,29 +107,40 @@
 </p>
 
 <div class="w-full max-w-lg">
-    {#if request}
+    {#if request && !request_auth}
         {#await request}
             <Alert class="mb-5" color="blue">
-                <p class="font-bold mb-2">Uploading...</p>
+                <p class="font-bold mb-3">Authenticated! Uploading...</p>
                 <Progressbar progress={uploadProgress} />
             </Alert>
         {:then res_req: Response}
             {#await res_req.json() then body}
                 {#if res_req.ok}
-                    <Alert class="mb-5" color="blue">
-                        Uploaded {body.files.length} files
+                    <Alert class="font-bold mb-5" color="blue">
+                        Uploaded {body.files.length} file(s)
                     </Alert>
                 {:else}
                     <Alert class="mb-5 font-bold text-left">
-                        <span class="font-bold">[!]</span>
                         {body.message}
                     </Alert>
                 {/if}
             {:catch _}
-                <Alert color="red" class="mb-5 font-bold text-left">
-                    <span class="font-bold">[!]</span> Request Failure
+                <Alert class="mb-5" color="red">
+                    <p class="font-bold">Request Failure!</p>
                 </Alert>
             {/await}
+        {/await}
+    {:else if request_auth}
+        {#await request_auth}
+            <Alert class="mb-5" color="yellow">
+                <p class="font-bold">Authenticating...</p>
+            </Alert>
+        {:then auth_response}
+            {#if !auth_response?.ok}
+                <Alert class="mb-5" color="red">
+                    <p class="font-bold">Authentication Failure!</p>
+                </Alert>
+            {/if}
         {/await}
     {/if}
 

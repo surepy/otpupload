@@ -3,6 +3,10 @@
 
 const challenges = new Map<string, number>();
 
+export interface UploadTokenResponse {
+    token: string 
+};
+
 function generateRandomString(length = 8) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';

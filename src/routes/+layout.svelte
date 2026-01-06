@@ -20,12 +20,12 @@
 	</NavUl>
 </Navbar>
 
-<div class="z-1 mb-20 relative isolate px-6 pt-3 lg:px-8 flex flex-col w-full text-center items-center justify-center">
+<div class="z-1 mb-20 relative isolate px-6 pt-3 lg:px-6 flex flex-col w-full text-center items-center justify-center">
 	{@render children()}
 </div>
 
-<Footer class="bg-white dark:bg-gray-900 shadow-none z-0 fixed bottom-0 w-full flex items-end justify-end mb-0">
-	<div class="flex flex-col justify-end">
+<Footer class="bg-white dark:bg-gray-900 shadow-none z-0 fixed bottom-0 w-full flex items-end justify-end mb-0 md:justify-end pb-6 p-5">
+	<div class="flex flex-col items-end justify-end">
 		<p class="dark:text-gray-100 text-xs font-extralight mb-1">
 			made by <a class="underline underline-offset-2" href="https://drowsy.me">sleepy</a>
 		</p>
@@ -34,7 +34,7 @@
 		</p>
 	</div>
 
-	<div class="mx-3">
-		<DarkMode class="border dark:border-gray-800" size="md" />
+	<div class="ml-3">
+		<DarkMode class="border dark:border-gray-800 dark:bg-transparent bg-gray-300/50" size="md" />
 	</div>
 </Footer>

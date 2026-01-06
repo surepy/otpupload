@@ -73,14 +73,14 @@
         class="w-full border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
                {dragover
             ? 'border-blue-500 bg-blue-500/10'
-            : 'border-gray-600 hover:border-gray-500 bg-gray-800/50'}"
+            : 'border-gray-600 hover:border-gray-500 dark:bg-transparent bg-gray-300/50'}"
         ondrop={handleDrop}
         ondragover={handleDragOver}
         ondragleave={handleDragLeave}
         onclick={() => inputEl.click()}
     >
         <svg
-            class="mx-auto h-12 w-12 text-gray-400 mb-3"
+            class="mx-auto h-12 w-12 text-black dark:text-gray-400 mb-3"
             stroke="currentColor"
             fill="none"
             viewBox="0 0 48 48"
@@ -92,8 +92,8 @@
                 stroke-linejoin="round"
             />
         </svg>
-        <p class="text-gray-300 font-medium">Drop files here or click to browse</p>
-        <p class="text-gray-500 text-sm mt-1">Supports multiple files</p>
+        <p class="dark:text-gray-300 text-black font-medium">Drop files here or click to browse</p>
+        <p class="dark:text-gray-500 text-black text-sm mt-1">Supports multiple files</p>
     </button>
 
     <input
