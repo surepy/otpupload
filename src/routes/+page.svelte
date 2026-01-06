@@ -1,37 +1,69 @@
 <script lang="ts">
-    import {
-        Label,
-        Fileupload,
-        Button,
-        Dropzone,
-        Progressbar,
-    } from "flowbite-svelte";
+    import { Label, Button, Progressbar } from "flowbite-svelte";
     import { Input } from "flowbite-svelte";
     import { Alert } from "flowbite-svelte";
+    import FileDropzone from "$lib/FileDropzone.svelte";
+    import type { PageProps } from "./$types";
+    import { client } from "@passwordless-id/webauthn";
 
-    let files: FileList;
-    let password: string;
-    let request: Promise<Request> | any;
+    let files: File[] = $state([]);
+    let password: string = $state("");
+    let request: Promise<Response> | null = $state(null);
 
-    $: request = null;
+    async function upload(target: string, formData : FormData) {
+        for (let file of files) {
+            formData.append("files", file, file.name);
+        }
 
-    function upload() {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", target);
+        xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+                const percent = (event.loaded / event.total) * 100;
+                console.log(`Upload progress: ${percent.toFixed(2)}%`);
+            }
+        };
+        xhr.onload = () => {
+            console.log("Upload complete")
+            // json parse
+            console.log(xhr.responseText);
+        };
+        xhr.onerror = () => console.error("Upload failed");
+        xhr.send(formData);
+        
+        files = [];
+    }
+
+    async function upload_otp() {
         if (files.length < 1) {
             console.log("no files supplied");
             return;
         }
 
         let data = new FormData();
+        data.append("auth_otp", password);
+        await upload("/upload", data);
+    }
 
-        for (let file of files) {
-            data.append("files", file, file.name);
+    // https://webauthn.passwordless.id/authentication/
+    async function upload_passkeys() {
+        // TODO: error on the page
+        if (files.length < 1) {
+            console.log("no files supplied");
+            return;
         }
 
-        request = fetch("upload", {
-            method: "post",
-            body: data,
-            headers: { otp: password },
+        let challenge_request: { challenge: string } = await (
+            await fetch("/challenge")
+        ).json();
+
+        const auth = await client.authenticate({
+            challenge: challenge_request.challenge,
         });
+
+        let data = new FormData();
+        data.append("auth_passkey", JSON.stringify(auth));
+        await upload("/upload_passkeys", data);
     }
 </script>
 
@@ -44,7 +76,6 @@
 <div class="w-full max-w-lg">
     {#if request}
         {#await request}
-            <!-- TODO: move to axios so i can track progress -->
             <Alert class="mb-5" color="blue">
                 <p class="font-bold mb-2">Uploading...</p>
                 <!--<Progressbar progress="100" />-->
@@ -81,9 +112,13 @@
 
     <Label class="pb-1 text-left">Upload Files</Label>
 
-    <Fileupload bind:files id="file" multiple clearable />
+    <FileDropzone bind:files />
 
-    <!-- TODO: dropzone -->
+    <Button class="min-w-30 max-w-1/2 w-full mt-6" onclick={upload_otp}
+        >Upload</Button
+    >
 
-    <Button class="mb-3 min-w-30 max-w-1/2 w-full mt-6" on:click={upload}>Upload</Button>
+    <Button class="min-w-30 max-w-1/2 w-full mt-4" onclick={upload_passkeys}
+        >Upload w/ Passkeys</Button
+    >
 </div>
