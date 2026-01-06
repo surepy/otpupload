@@ -10,28 +10,37 @@
     let password: string = $state("");
     let request: Promise<Response> | null = $state(null);
 
-    async function upload(target: string, formData : FormData) {
+    let uploadProgress : number = $state(0);
+
+    async function upload(target: string, formData: FormData) {
         for (let file of files) {
             formData.append("files", file, file.name);
         }
 
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", target);
-        xhr.upload.onprogress = (event) => {
-            if (event.lengthComputable) {
-                const percent = (event.loaded / event.total) * 100;
-                console.log(`Upload progress: ${percent.toFixed(2)}%`);
-            }
-        };
-        xhr.onload = () => {
-            console.log("Upload complete")
-            // json parse
-            console.log(xhr.responseText);
-        };
-        xhr.onerror = () => console.error("Upload failed");
-        xhr.send(formData);
-        
-        files = [];
+        request = new Promise<Response>((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                    uploadProgress = (event.loaded / event.total) * 100;
+                }
+            };
+
+            xhr.onload = () => {
+                resolve(new Response(xhr.response, {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                }));
+                
+                files = [];
+            };
+
+            xhr.onerror = () => reject(new Error("Upload failed"));
+
+            xhr.open("POST", target);
+            xhr.send(formData);
+        });
+
     }
 
     async function upload_otp() {
@@ -42,6 +51,7 @@
 
         let data = new FormData();
         data.append("auth_otp", password);
+        
         await upload("/upload", data);
     }
 
@@ -78,7 +88,7 @@
         {#await request}
             <Alert class="mb-5" color="blue">
                 <p class="font-bold mb-2">Uploading...</p>
-                <!--<Progressbar progress="100" />-->
+                <Progressbar progress={uploadProgress} />
             </Alert>
         {:then res_req: Response}
             {#await res_req.json() then body}
