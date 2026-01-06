@@ -11,6 +11,8 @@ set ``OTP_SECRET=""`` and ``TOTP_WINDOW=10`` in ``docker-compose.yml`` or ``.env
 
 (get those values by running the app without them and going to ``/setup`` in the application, TODO this will be improved)
 
+and ``AUTHKEY_ID``, ``AUTHKEY_PUBKEY``, ``AUTHKEY_ALGO`` by getting values in ``/setup_passkeys``
+
 and deploy it how u like (I will use docker in truenas fyi)
 
 keep ``UPLOAD_DIRECTORY="./uploads"`` as-is probably if using docker and just change the mounts
@@ -35,5 +37,3 @@ npm run build
 ```
 
 You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
