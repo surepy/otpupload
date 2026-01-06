@@ -3,7 +3,7 @@
 
 ## Why
 
-I wanted to upload files to my truenas box without having to log into something when in a public pc for example
+I wanted to upload files to my truenas box without having to log into something when in a public pc for example.
 
 ## Deploying
 
