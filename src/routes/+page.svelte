@@ -68,7 +68,8 @@
             await request_auth
         ).json();
 
-        await upload(auth_response.token);
+        if (auth_response.token)
+            await upload(auth_response.token);
     }
 
     // https://webauthn.passwordless.id/authentication/
@@ -96,7 +97,8 @@
             await request_auth
         ).json();
 
-        await upload(auth_response.token);
+        if (auth_response.token)
+            await upload(auth_response.token);
     }
 </script>
 

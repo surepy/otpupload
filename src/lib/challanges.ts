@@ -4,7 +4,7 @@ const challenges = new Map<string, number>(); // challenge -> expiry timestamp
 
 export function createChallenge(): string {
     const challenge = server.randomChallenge();
-    challenges.set(challenge, Date.now() + 60_000); // 60s expiry
+    challenges.set(challenge, Date.now() + 60000); // 60s expiry
     return challenge;
 }
 
