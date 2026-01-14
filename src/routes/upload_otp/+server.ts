@@ -26,7 +26,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	console.log(`requested code = ${otp_request.auth_otp} (should be ${totp.generate()}) auth = ${authenticated}`)
 
-	if (authenticated) {
+	if (typeof authenticated != null) {
 		return json({token: createToken()});
 	}
 
