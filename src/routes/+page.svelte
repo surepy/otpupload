@@ -156,6 +156,7 @@
         placeholder="000000"
         inputmode="numeric"
         pattern="[0-9]*"
+        autocomplete="one-time-code"
     />
 
     <Label class="pb-1 text-left">Upload Files</Label>

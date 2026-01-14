@@ -3,6 +3,7 @@ import type { RequestHandler } from './$types';
 import * as OTPAuth from "otpauth";
 import { getConfig } from '$lib/server/config';
 import { createToken } from '$lib/uploadtoken';
+import { dev } from '$app/environment';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const config = getConfig();
@@ -24,7 +25,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	let authenticated = totp.validate({ token: otp_request.auth_otp, window: config.totpWindow ?? 2 });
 
-	console.log(`requested code = ${otp_request.auth_otp} (should be ${totp.generate()}) auth = ${authenticated}`)
+	if (dev) console.log(`requested code = ${otp_request.auth_otp} (should be ${totp.generate()}) auth = ${authenticated}`)
 
 	if (typeof authenticated != null) {
 		return json({token: createToken()});
