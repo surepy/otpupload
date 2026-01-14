@@ -6,6 +6,7 @@
     import type { PageProps } from "./$types";
     import { client } from "@passwordless-id/webauthn";
     import type { UploadTokenResponse } from "$lib/uploadtoken";
+    import { tick } from "svelte";
 
     let files: File[] = $state([]);
     let password: string = $state("");
@@ -68,6 +69,7 @@
             await request_auth
         ).json();
 
+        
         if (auth_response.token)
             await upload(auth_response.token);
     }

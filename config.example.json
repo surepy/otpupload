@@ -1,0 +1,9 @@
+{
+  "otpSecret": "",
+  "totpWindow": 2,
+  "authkeyId": "",
+  "authkeyPubkey": "",
+  "authkeyAlgo": "",
+  "appUrl": "",
+  "uploadDirectory": ""
+}

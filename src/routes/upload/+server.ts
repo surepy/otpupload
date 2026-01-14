@@ -4,6 +4,7 @@ import * as OTPAuth from "otpauth";
 import { env } from "$env/dynamic/private"
 import { writeFile } from 'fs/promises';
 import { consumeToken } from '$lib/uploadtoken';
+import { dev } from '$app/environment';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const fromData = await request.formData();
@@ -20,7 +21,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		for (let file of <File[]>fromData.getAll("files")) {
 			
 			await writeFile(
-				env.NODE_ENV === "production" ? `${env.UPLOAD_DIRECTORY}/${new Date().getTime()}_${file.name}` : `./static/uploads/${file.name}`, 
+				dev ? `${env.UPLOAD_DIRECTORY}/${new Date().getTime()}_${file.name}` : `./static/uploads/${file.name}`, 
 				//@ts-expect-error idc it works
 				file.stream()
 			);
