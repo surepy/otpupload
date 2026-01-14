@@ -12,8 +12,8 @@ export const POST: RequestHandler = async ({ request }) => {
 	const config = getConfig();
 
 	const credentialKey = {
-		id: config.authkeyId,
-		publicKey: config.authkeyPubkey,
+		id: <string>config.authkeyId,
+		publicKey: <string>config.authkeyPubkey,
 		algorithm: config.authkeyAlgo as NamedAlgo,
 		transports: ["usb", "ble"] as ExtendedAuthenticatorTransport[]
 	}
@@ -34,7 +34,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	const expected = {
 		challenge: clientData.challenge,
 		// APP_URL must be correct in production.
-		origin: <string>(dev ? config.appUrl : clientData.origin),
+		origin: (dev ? <string>config.appUrl : clientData.origin),
 		userVerified: true
 	}
 

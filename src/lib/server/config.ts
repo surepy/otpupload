@@ -21,7 +21,7 @@ export interface Config {
 	authkeyId?: string;
 	authkeyPubkey?: string;
 	authkeyAlgo?: string;
-	appUrl: string;
+	appUrl?: string;
 	uploadDirectory?: string;
 }
 

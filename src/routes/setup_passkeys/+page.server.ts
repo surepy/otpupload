@@ -32,7 +32,7 @@ export const actions: Actions = {
 		const expected = {
 			challenge: clientData.challenge,
 			// APP_URL must be correct in production.
-			origin: dev ? config.appUrl : clientData.origin
+			origin: dev ? <string>config.appUrl : clientData.origin
 		}
 
 		const registrationParsed = await server.verifyRegistration(registration, expected);
